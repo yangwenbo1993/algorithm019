@@ -55,3 +55,59 @@ class Solution:
                 right = cmid - 1
 
         return False
+
+
+#单词接龙 BFS
+import collections
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        wordSet = set(wordList)
+        if not endWord in wordSet:
+            return 0
+        visit_set = set()
+        queue = collections.deque()
+        queue.append((beginWord,1))
+        while queue:
+            theWord,path = queue.popleft()
+            for i in range(0,len(theWord)):
+                newWord = theWord
+                for j in range(0,26):
+                    newWord = newWord[:i]+chr(97+j)+newWord[i+1:]
+                    if newWord == endWord:return path+1
+                    if newWord in wordSet and not newWord in visit_set:
+                        visit_set.add(newWord)
+                        queue.append((newWord,path+1))
+        return 0
+
+
+# 单词接龙 双向BFS
+class Solution:
+
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        wordSet = set(wordList)
+        if not endWord in wordSet:
+            return 0
+        visit_set1,visit_set2 = set(),set()
+        visit_set1.add(beginWord)
+        visit_set2.add(endWord)
+        queue1,queue2 = collections.deque(),collections.deque()
+        queue1.append(beginWord)
+        queue2.append(endWord)
+        path = 0
+        while queue1 and queue2:
+            if len(queue1)>len(queue2):
+                queue1,queue2 = queue2,queue1
+                visit_set1,visit_set2 = visit_set2,visit_set1
+            path+=1
+            for k in range(len(queue1)):
+                theWord = queue1.popleft()
+                if theWord in visit_set2:
+                    return path
+                for i in range(0,len(theWord)):
+                    newWord = theWord
+                    for j in range(0,26):
+                        newWord = newWord[:i]+chr(97+j)+newWord[i+1:]
+                        if newWord in wordSet and not newWord in visit_set1:
+                            visit_set1.add(newWord)
+                            queue1.append(newWord)
+        return 0
